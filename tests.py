@@ -3,20 +3,18 @@ import pytest
 class TestBooksCollector:
 
     @pytest.mark.parametrize ('book_name', ['Маленький принц','Гарри Поттер'])
-    def test_add_new_book(self, collector, book_name):
+    def test_add_new_book_adds_to_collection(self, collector, book_name):
            collector.add_new_book(book_name)
            assert book_name in collector.get_books_genre()
-           assert collector.get_book_genre(book_name) == ''
 
     @pytest.mark.parametrize('invalid_name', ['', 'А' * 41])
     def test_add_new_book_invalid_names(self, collector, invalid_name):
         collector.add_new_book(invalid_name)
         assert invalid_name not in collector.get_books_genre()
 
-    def test_set_and_get_book_genre(self, collector):
-        collector.add_new_book('Книга')
-        collector.set_book_genre('Книга', 'Фантастика')
-        assert collector.get_book_genre('Книга') == 'Фантастика'
+    def test_get_book_genre_returns_empty_for_new_book(self, collector):
+        collector.add_new_book('Новая книга')
+        assert collector.get_book_genre('Новая книга') == ''
 
     def test_set_book_genre_invalid(self, collector):
         collector.add_new_book('Книга')
@@ -55,4 +53,9 @@ class TestBooksCollector:
         collector.add_book_in_favorites('Книга 1')
         collector.add_book_in_favorites('Книга 2')
         assert set(collector.get_list_of_favorites_books()) == {'Книга 1', 'Книга 2'}
+
+    def test_get_books_genre_shows_current_genres(self, collector):
+        collector.add_new_book('Книга')
+        collector.set_book_genre('Книга', 'Детективы')
+        assert collector.get_books_genre()['Книга'] == 'Детективы'
 
